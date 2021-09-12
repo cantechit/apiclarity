@@ -268,6 +268,8 @@ paths:
         - $ref: '#/parameters/endTime'
         - $ref: '#/parameters/showNonApi'
         - $ref: '#/parameters/methodIsFilter'
+        - $ref: '#/parameters/providedPathIDIsFilter'
+        - $ref: '#/parameters/reconstructedPathIDIsFilter'
         - $ref: '#/parameters/pathIsFilter'
         - $ref: '#/parameters/pathIsNotFilter'
         - $ref: '#/parameters/pathStartsWithFilter'
@@ -443,6 +445,22 @@ parameters:
         - OPTIONS
         - TRACE
         - PATCH
+    required: false
+
+  providedPathIDIsFilter:
+    name: 'providedPathID[is]'
+    in: 'query'
+    type: 'array'
+    items:
+      type: 'string'
+    required: false
+
+  reconstructedPathIDIsFilter:
+    name: 'reconstructedPathID[is]'
+    in: 'query'
+    type: 'array'
+    items:
+      type: 'string'
     required: false
 
   pathIsFilter:
@@ -879,6 +897,9 @@ definitions:
     properties:
       path:
         type: 'string'
+      pathId:
+        type: 'string'
+        format: 'uuid'
       method:
         $ref: '#/definitions/HttpMethod'
 
