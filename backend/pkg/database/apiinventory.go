@@ -27,27 +27,31 @@ const (
 	apiInventoryTableName = "api_inventory"
 
 	// NOTE: when changing one of the column names change also the gorm label in APIInfo
-	idColumnName                   = "id"
-	typeColumnName                 = "type"
-	nameColumnName                 = "name"
-	portColumnName                 = "port"
-	hasProvidedSpecColumnName      = "hasProvidedSpec"
-	hasReconstructedSpecColumnName = "hasReconstructedSpec"
-	reconstructedSpecColumnName    = "reconstructedSpec"
-	providedSpecColumnName         = "providedSpec"
+	idColumnName                    = "id"
+	typeColumnName                  = "type"
+	nameColumnName                  = "name"
+	portColumnName                  = "port"
+	hasProvidedSpecColumnName       = "hasProvidedSpec"
+	hasReconstructedSpecColumnName  = "hasReconstructedSpec"
+	reconstructedSpecColumnName     = "reconstructedSpec"
+	reconstructedSpecInfoColumnName = "reconstructedSpecInfo"
+	providedSpecColumnName          = "providedSpec"
+	providedSpecInfoColumnName      = "providedSpecInfo"
 )
 
 type APIInfo struct {
 	// will be populated after inserting to DB
 	ID uint `json:"id,omitempty" gorm:"primarykey" faker:"-"`
 
-	Type                 models.APIType `json:"type,omitempty" gorm:"column:type" faker:"oneof: INTERNAL, EXTERNAL"`
-	Name                 string         `json:"name,omitempty" gorm:"column:name" faker:"oneof: test.com, example.com, kaki.org"`
-	Port                 int64          `json:"port,omitempty" gorm:"column:port" faker:"oneof: 80, 443"`
-	HasProvidedSpec      bool           `json:"hasProvidedSpec,omitempty" gorm:"column:hasProvidedSpec"`
-	HasReconstructedSpec bool           `json:"hasReconstructedSpec,omitempty" gorm:"column:hasReconstructedSpec"`
-	ReconstructedSpec    string         `json:"reconstructedSpec,omitempty" gorm:"column:reconstructedSpec" faker:"-"`
-	ProvidedSpec         string         `json:"providedSpec,omitempty" gorm:"column:providedSpec" faker:"-"`
+	Type                  models.APIType `json:"type,omitempty" gorm:"column:type" faker:"oneof: INTERNAL, EXTERNAL"`
+	Name                  string         `json:"name,omitempty" gorm:"column:name" faker:"oneof: test.com, example.com, kaki.org"`
+	Port                  int64          `json:"port,omitempty" gorm:"column:port" faker:"oneof: 80, 443"`
+	HasProvidedSpec       bool           `json:"hasProvidedSpec,omitempty" gorm:"column:hasProvidedSpec"`
+	HasReconstructedSpec  bool           `json:"hasReconstructedSpec,omitempty" gorm:"column:hasReconstructedSpec"`
+	ReconstructedSpec     string         `json:"reconstructedSpec,omitempty" gorm:"column:reconstructedSpec" faker:"-"`
+	ReconstructedSpecInfo string         `json:"reconstructedSpecInfo,omitempty" gorm:"column:reconstructedSpecInfo" faker:"-"`
+	ProvidedSpec          string         `json:"providedSpec,omitempty" gorm:"column:providedSpec" faker:"-"`
+	ProvidedSpecInfo      string         `json:"providedSpecInfo,omitempty" gorm:"column:providedSpecInfo" faker:"-"`
 }
 
 func (APIInfo) TableName() string {
@@ -123,14 +127,6 @@ func setAPIInventoryFilters(table *gorm.DB, params operations.GetAPIInventoryPar
 	table = FilterIsBool(table, hasReconstructedSpecColumnName, params.HasReconstructedSpecIs)
 
 	return table
-}
-
-func SetReconstructedAPISpec(name, port, spec string) error {
-	if err := GetAPIInventoryTable().Model(&APIInfo{}).Where(nameColumnName+" = ?", name).Where(portColumnName+" = ?", port).Updates(map[string]interface{}{reconstructedSpecColumnName: spec, hasReconstructedSpecColumnName: true}).Error; err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func GetApiID(name, port string) (uint, error) {

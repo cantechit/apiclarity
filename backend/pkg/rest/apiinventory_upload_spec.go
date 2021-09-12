@@ -16,16 +16,15 @@
 package rest
 
 import (
-	"encoding/json"
 	"fmt"
 	"strconv"
 
 	"github.com/ghodss/yaml"
 	"github.com/go-openapi/loads"
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/go-openapi/spec"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/validate"
+	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/apiclarity/apiclarity/api/server/models"
@@ -35,87 +34,82 @@ import (
 )
 
 func (s *RESTServer) PutAPIInventoryAPIIDSpecsProvidedSpec(params operations.PutAPIInventoryAPIIDSpecsProvidedSpecParams) middleware.Responder {
-	var apiInfo = &database.APIInfo{}
-	var jsonSpec []byte
-	var err error
-
 	log.Debugf("Got PutAPIInventoryAPIIDSpecsProvidedSpecParams: %+v", params)
 
-	jsonSpec = []byte(params.Body.RawSpec)
-
-	// if spec is a yaml spec, convert it to json format for saving in db
-	if isYamlSpec([]byte(params.Body.RawSpec)) {
-		jsonSpec, err = yaml.YAMLToJSON([]byte(params.Body.RawSpec))
-		if err != nil {
-			// The spec was already validated as a valid yaml, so error here is an internal error, not a validation error
-			log.Errorf("Failed to convert yaml spec to json: %s. %v", params.Body.RawSpec, err)
-			return operations.NewPutAPIInventoryAPIIDSpecsProvidedSpecDefault(500)
-		}
+	// Convert YAML to JSON. Since JSON is a subset of YAML, passing JSON through
+	// this method should be a no-op.
+	jsonSpec, err := yaml.YAMLToJSON([]byte(params.Body.RawSpec))
+	if err != nil {
+		log.Errorf("Failed to convert yaml spec to json: %s. %v", params.Body.RawSpec, err)
+		return operations.NewPutAPIInventoryAPIIDSpecsProvidedSpecDefault(500)
 	}
-	if err := validateJsonSpec(jsonSpec); err != nil {
-		log.Errorf("Spec validation failed. Spec: %s. %v", jsonSpec, err)
+
+	// Creates a new analyzed spec document for the provided spec
+	analyzed, err := loads.Analyzed(jsonSpec, "")
+	if err != nil {
+		log.Errorf("failed to analyze spec. Spec: %s. %v", jsonSpec, err)
 		return operations.NewPutAPIInventoryAPIIDSpecsProvidedSpecBadRequest().WithPayload("Spec validation failed")
 	}
 
-	if err = database.PutProvidedAPISpec(params); err != nil {
+	// Validates an OpenAPI 2.0 specification document.
+	err = validate.Spec(analyzed, strfmt.Default)
+	if err != nil {
+		log.Errorf("spec validation failed. %v", err)
+		return operations.NewPutAPIInventoryAPIIDSpecsProvidedSpecBadRequest().WithPayload("Spec validation failed")
+	}
+
+	// Create a Path to PathID map for each path in the provided spec
+	pathToPathID := make(map[string]string)
+	for path := range analyzed.Spec().Paths.Paths {
+		pathToPathID[path] = uuid.NewV4().String()
+	}
+
+	specInfo, err := createSpecInfo(params.Body.RawSpec, pathToPathID)
+	if err != nil {
+		log.Errorf("Failed to create spec info. %v", err)
+		return operations.NewPutAPIInventoryAPIIDSpecsProvidedSpecDefault(500)
+	}
+
+	// Set provided spec to DB
+	if err = database.PutAPISpec(uint(params.APIID), params.Body.RawSpec, specInfo, database.ProvidedSpecType); err != nil {
 		// TODO: need to handle errors
 		// https://github.com/go-gorm/gorm/blob/master/errors.go
 		log.Errorf("Failed to put provided API spec. %v", err)
 		return operations.NewPutAPIInventoryAPIIDSpecsProvidedSpecDefault(500)
 	}
 
-	if err := database.GetAPIInventoryTable().First(&apiInfo, params.APIID).Error; err != nil {
-		log.Errorf("Failed to get APIInventory table with api id: %v. %v", params.APIID, err)
-		return operations.NewPutAPIInventoryAPIIDSpecsProvidedSpecDefault(500)
-	}
-	if err := s.speculator.LoadProvidedSpec(speculator.GetSpecKey(apiInfo.Name, strconv.Itoa(int(apiInfo.Port))), jsonSpec); err != nil {
-		log.Errorf("Failed to load provided spec. %v", err)
+	// Load provided spec to Speculator
+	if err := s.loadProvidedSpec(params.APIID, jsonSpec, pathToPathID); err != nil {
+		log.Errorf("Failed to load provided API spec: %v", err)
 		return operations.NewPutAPIInventoryAPIIDSpecsProvidedSpecDefault(500)
 	}
 
-	return operations.NewPutAPIInventoryAPIIDSpecsProvidedSpecCreated().WithPayload(
-		&models.RawSpec{
-			RawSpec: params.Body.RawSpec,
-		})
+	// Since we don't have a mapping between events paths to the parametrized path,
+	// We will not set the old events with provided path IDs
+
+	return operations.NewPutAPIInventoryAPIIDSpecsProvidedSpecCreated().
+		WithPayload(&models.RawSpec{RawSpec: params.Body.RawSpec})
 }
 
-func isJsonSpec(rawSpec []byte) bool {
-	swagger := spec.Swagger{}
-
-	if err := json.Unmarshal(rawSpec, &swagger); err != nil {
-		return false
-	}
-	return true
-}
-
-func isYamlSpec(rawSpec []byte) bool {
-	swagger := spec.Swagger{}
-
-	if err := yaml.Unmarshal(rawSpec, &swagger); err != nil {
-		return false
-	}
-	return true
-}
-
-func validateRawJsonSpec(rawSpec []byte) error {
-	doc, err := loads.Analyzed(rawSpec, "")
+func (s *RESTServer) loadProvidedSpec(apiID uint32, jsonSpec []byte, pathToPathID map[string]string) error {
+	specKey, err := getSpecKey(apiID)
 	if err != nil {
-		return fmt.Errorf("failed to analyze spec: %s. %v", rawSpec, err)
+		return fmt.Errorf("failed to get spec key: %v", err)
 	}
-	err = validate.Spec(doc, strfmt.Default)
-	if err != nil {
-		return fmt.Errorf("spec validation failed. %v", err)
+
+	if err := s.speculator.LoadProvidedSpec(specKey, jsonSpec, pathToPathID); err != nil {
+		return fmt.Errorf("failed to load provided spec: %v", err)
 	}
+
 	return nil
 }
 
-func validateJsonSpec(rawSpec []byte) error {
-	if !isJsonSpec(rawSpec) {
-		return fmt.Errorf("not a vaild json spec schema: %s", rawSpec)
+func getSpecKey(apiID uint32) (speculator.SpecKey, error) {
+	var apiInfo = &database.APIInfo{}
+
+	if err := database.GetAPIInventoryTable().First(&apiInfo, apiID).Error; err != nil {
+		return "", fmt.Errorf("failed to get API Info from DB. id=%v: %v", apiID, err)
 	}
 
-	if err := validateRawJsonSpec(rawSpec); err != nil {
-		return fmt.Errorf("failed to validate json spec. %v", err)
-	}
-	return nil
+	return speculator.GetSpecKey(apiInfo.Name, strconv.Itoa(int(apiInfo.Port))), nil
 }

@@ -74,14 +74,6 @@ func (s *RESTServer) PostAPIInventoryReviewIDApprovedReview(params operations.Po
 		return operations.NewPostAPIInventoryReviewIDApprovedReviewDefault(500)
 	}
 
-	// TODO: Save *models.SpecInfo also when setting the reconstructed/provided spec
-	// 1. we will have the path id here so we will not need to lookup each *models.SpecInfo creation in the db
-	// 2. avoid creating *models.SpecInfo each time in GetAPIInventoryAPIIDSpecs
-	if err := database.SetReconstructedAPISpec(host, port, string(oapSpec)); err != nil {
-		log.Errorf("Failed to save reconstructed API spec to db: %v", err)
-		return operations.NewPostAPIInventoryReviewIDApprovedReviewDefault(500)
-	}
-
 	// TODO: Update PostAPIInventoryReviewIDApprovedReview params to include api ID AND review ID
 	apiId, err := database.GetApiID(host, port)
 	if err != nil {
@@ -89,12 +81,24 @@ func (s *RESTServer) PostAPIInventoryReviewIDApprovedReview(params operations.Po
 		return operations.NewPostAPIInventoryReviewIDApprovedReviewDefault(500)
 	}
 
+	specInfo, err := createSpecInfo(string(oapSpec), getPathToPathIDMap(approvedReview))
+	if err != nil {
+		log.Errorf("Failed to create spec info. %v", err)
+		return operations.NewPutAPIInventoryAPIIDSpecsProvidedSpecDefault(500)
+	}
+
+	if err := database.PutAPISpec(apiId, string(oapSpec), specInfo, database.ReconstructedSpecType); err != nil {
+		log.Errorf("Failed to save reconstructed API spec to db: %v", err)
+		return operations.NewPostAPIInventoryReviewIDApprovedReviewDefault(500)
+	}
+
+	// TODO: Do we need path-id map?
 	// populate API Path table
 	database.StorePaths(createAPIPaths(apiId, approvedReview))
 
 	// update all the API events corresponding to the APIEventsPaths in the approved review
 	go func() {
-		if err := database.SetAPIEventsPathId(approvedReview.PathItemsReview, host, port); err != nil {
+		if err := database.SetAPIEventsReconstructedPathId(approvedReview.PathItemsReview, host, port); err != nil {
 			log.Errorf("Failed to set path ID on API events: %v", err)
 		}
 	}()
@@ -102,6 +106,16 @@ func (s *RESTServer) PostAPIInventoryReviewIDApprovedReview(params operations.Po
 	return operations.NewPostAPIInventoryReviewIDApprovedReviewOK().WithPayload(&models.SuccessResponse{
 		Message: "Success",
 	})
+}
+
+func getPathToPathIDMap(review *speculatorspec.ApprovedSpecReview) map[string]string {
+	pathToPathID := make(map[string]string)
+
+	for _, item := range review.PathItemsReview {
+		pathToPathID[item.ParameterizedPath] = item.PathUUID
+	}
+
+	return pathToPathID
 }
 
 func createAPIPaths(apiId uint, review *speculatorspec.ApprovedSpecReview) []*database.APIPath {

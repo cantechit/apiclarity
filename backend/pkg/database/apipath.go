@@ -64,12 +64,3 @@ func StorePaths(paths []*APIPath) {
 		}
 	}
 }
-
-func GetPathIDs(path string) ([]string, error) {
-	var pathIds []string
-	if result := GetAPIPathsTable().Select(apiPathPathIdColumnName).Where(apiPathPathColumnName+" = ?", path).Find(&pathIds); result.Error != nil {
-		return nil, result.Error
-	}
-
-	return pathIds, nil
-}
