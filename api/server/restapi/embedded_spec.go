@@ -825,6 +825,7 @@ func init() {
     },
     "DiffType": {
       "type": "string",
+      "default": "NO_DIFF",
       "enum": [
         "ZOMBIE_DIFF",
         "SHADOW_DIFF",
@@ -2561,6 +2562,7 @@ func init() {
     },
     "DiffType": {
       "type": "string",
+      "default": "NO_DIFF",
       "enum": [
         "ZOMBIE_DIFF",
         "SHADOW_DIFF",

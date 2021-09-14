@@ -20,7 +20,7 @@ import (
 type APIEventSpecDiff struct {
 
 	// diff type
-	DiffType DiffType `json:"diffType,omitempty"`
+	DiffType *DiffType `json:"diffType,omitempty"`
 
 	// New spec json string
 	// Required: true
@@ -58,11 +58,13 @@ func (m *APIEventSpecDiff) validateDiffType(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if err := m.DiffType.Validate(formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("diffType")
+	if m.DiffType != nil {
+		if err := m.DiffType.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("diffType")
+			}
+			return err
 		}
-		return err
 	}
 
 	return nil
@@ -102,11 +104,13 @@ func (m *APIEventSpecDiff) ContextValidate(ctx context.Context, formats strfmt.R
 
 func (m *APIEventSpecDiff) contextValidateDiffType(ctx context.Context, formats strfmt.Registry) error {
 
-	if err := m.DiffType.ContextValidate(ctx, formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("diffType")
+	if m.DiffType != nil {
+		if err := m.DiffType.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("diffType")
+			}
+			return err
 		}
-		return err
 	}
 
 	return nil

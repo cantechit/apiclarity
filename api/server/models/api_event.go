@@ -56,7 +56,7 @@ type APIEvent struct {
 	SourceIP string `json:"sourceIP,omitempty"`
 
 	// spec diff type
-	SpecDiffType DiffType `json:"specDiffType,omitempty"`
+	SpecDiffType *DiffType `json:"specDiffType,omitempty"`
 
 	// status code
 	StatusCode int64 `json:"statusCode,omitempty"`
@@ -127,11 +127,13 @@ func (m *APIEvent) validateSpecDiffType(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if err := m.SpecDiffType.Validate(formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("specDiffType")
+	if m.SpecDiffType != nil {
+		if err := m.SpecDiffType.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("specDiffType")
+			}
+			return err
 		}
-		return err
 	}
 
 	return nil
@@ -197,11 +199,13 @@ func (m *APIEvent) contextValidateMethod(ctx context.Context, formats strfmt.Reg
 
 func (m *APIEvent) contextValidateSpecDiffType(ctx context.Context, formats strfmt.Registry) error {
 
-	if err := m.SpecDiffType.ContextValidate(ctx, formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("specDiffType")
+	if m.SpecDiffType != nil {
+		if err := m.SpecDiffType.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("specDiffType")
+			}
+			return err
 		}
-		return err
 	}
 
 	return nil

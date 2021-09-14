@@ -828,6 +828,7 @@ definitions:
 
   DiffType:
     type: string
+    default: NO_DIFF
     enum:
       - ZOMBIE_DIFF
       - SHADOW_DIFF
