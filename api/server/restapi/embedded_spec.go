@@ -690,6 +690,9 @@ func init() {
         "sourceIP": {
           "type": "string"
         },
+        "specDiffType": {
+          "$ref": "#/definitions/DiffType"
+        },
         "statusCode": {
           "type": "integer"
         },
@@ -720,6 +723,9 @@ func init() {
         "newSpec"
       ],
       "properties": {
+        "diffType": {
+          "$ref": "#/definitions/DiffType"
+        },
         "newSpec": {
           "description": "New spec json string",
           "type": "string"
@@ -816,6 +822,15 @@ func init() {
           }
         }
       }
+    },
+    "DiffType": {
+      "type": "string",
+      "enum": [
+        "ZOMBIE_DIFF",
+        "SHADOW_DIFF",
+        "SIMPLE_DIFF",
+        "NO_DIFF"
+      ]
     },
     "HitCount": {
       "type": "object",
@@ -2411,6 +2426,9 @@ func init() {
         "sourceIP": {
           "type": "string"
         },
+        "specDiffType": {
+          "$ref": "#/definitions/DiffType"
+        },
         "statusCode": {
           "type": "integer"
         },
@@ -2441,6 +2459,9 @@ func init() {
         "newSpec"
       ],
       "properties": {
+        "diffType": {
+          "$ref": "#/definitions/DiffType"
+        },
         "newSpec": {
           "description": "New spec json string",
           "type": "string"
@@ -2537,6 +2558,15 @@ func init() {
           }
         }
       }
+    },
+    "DiffType": {
+      "type": "string",
+      "enum": [
+        "ZOMBIE_DIFF",
+        "SHADOW_DIFF",
+        "SIMPLE_DIFF",
+        "NO_DIFF"
+      ]
     },
     "HitCount": {
       "type": "object",

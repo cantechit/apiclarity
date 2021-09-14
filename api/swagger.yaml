@@ -709,6 +709,8 @@ definitions:
       hasProvidedSpecDiff:
         type: 'boolean'
         default: false
+      specDiffType:
+        $ref: '#/definitions/DiffType'
       hostSpecName:
         type: 'string'
       apiInfoId:
@@ -724,6 +726,8 @@ definitions:
       - oldSpec
       - newSpec
     properties:
+      diffType:
+        $ref: '#/definitions/DiffType'
       oldSpec:
         description: 'Old spec json string'
         type: 'string'
@@ -821,6 +825,14 @@ definitions:
     enum:
       - INTERNAL
       - EXTERNAL
+
+  DiffType:
+    type: string
+    enum:
+      - ZOMBIE_DIFF
+      - SHADOW_DIFF
+      - SIMPLE_DIFF
+      - NO_DIFF
 
   ApiResponse:
     description: 'An object that is return in all cases of failures.'
