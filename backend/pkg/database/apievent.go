@@ -41,6 +41,7 @@ const (
 	destinationIPColumnName        = "destinationIP"
 	destinationPortColumnName      = "destinationPort"
 	hasSpecDiffColumnName          = "hasSpecDiff" // hasProvidedSpecDiff || hasReconstructedSpecDiff
+	specDiffTypeColumnName         = "specDiffType"
 	hostSpecNameColumnName         = "hostSpecName"
 	newReconstructedSpecColumnName = "newReconstructedSpec"
 	oldReconstructedSpecColumnName = "oldReconstructedSpec"
@@ -71,6 +72,7 @@ type APIEvent struct {
 	HasReconstructedSpecDiff bool              `json:"hasReconstructedSpecDiff,omitempty" gorm:"column:hasReconstructedSpecDiff"`
 	HasProvidedSpecDiff      bool              `json:"hasProvidedSpecDiff,omitempty" gorm:"column:hasProvidedSpecDiff"`
 	HasSpecDiff              bool              `json:"hasSpecDiff,omitempty" gorm:"column:hasSpecDiff"`
+	SpecDiffType             models.DiffType   `json:"specDiffType,omitempty" gorm:"column:specDiffType" faker:"oneof: ZOMBIE_DIFF, SHADOW_DIFF, SIMPLE_DIFF, NO_DIFF"`
 	HostSpecName             string            `json:"hostSpecName,omitempty" gorm:"column:hostSpecName" faker:"oneof: test.com, example.com, kaki.org"`
 	IsNonAPI                 bool              `json:"isNonApi,omitempty" gorm:"column:isNonApi" faker:"-"`
 
@@ -154,6 +156,7 @@ func APIEventFromDB(event *APIEvent) *models.APIEvent {
 		Path:                     event.Path,
 		Query:                    event.Query,
 		SourceIP:                 event.SourceIP,
+		SpecDiffType:             &event.SpecDiffType,
 		StatusCode:               event.StatusCode,
 		Time:                     event.Time,
 	}
@@ -235,7 +238,7 @@ func GetAPIEvent(eventID uint32) (*APIEvent, error) {
 func GetAPIEventReconstructedSpecDiff(eventID uint32) (*APIEvent, error) {
 	var apiEvent APIEvent
 
-	if err := GetAPIEventsTable().Select(newReconstructedSpecColumnName, oldReconstructedSpecColumnName).First(&apiEvent, eventID).Error; err != nil {
+	if err := GetAPIEventsTable().Select(newReconstructedSpecColumnName, oldReconstructedSpecColumnName, specDiffTypeColumnName).First(&apiEvent, eventID).Error; err != nil {
 		return nil, err
 	}
 
@@ -245,7 +248,7 @@ func GetAPIEventReconstructedSpecDiff(eventID uint32) (*APIEvent, error) {
 func GetAPIEventProvidedSpecDiff(eventID uint32) (*APIEvent, error) {
 	var apiEvent APIEvent
 
-	if err := GetAPIEventsTable().Select(newProvidedSpecColumnName, oldProvidedSpecColumnName).First(&apiEvent, eventID).Error; err != nil {
+	if err := GetAPIEventsTable().Select(newProvidedSpecColumnName, oldProvidedSpecColumnName, specDiffTypeColumnName).First(&apiEvent, eventID).Error; err != nil {
 		return nil, err
 	}
 
