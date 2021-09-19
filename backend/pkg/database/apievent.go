@@ -204,6 +204,7 @@ func getAPIEventsParamsToFilters(params operations.GetAPIEventsParams) *APIEvent
 		EndTime:              params.EndTime,
 		ShowNonAPI:           params.ShowNonAPI,
 		HasSpecDiffIs:        params.HasSpecDiffIs,
+		SpecDiffTypeIs:       params.SpecDiffTypeIs,
 		MethodIs:             params.MethodIs,
 		PathContains:         params.PathContains,
 		PathEnd:              params.PathEnd,
@@ -273,6 +274,7 @@ type APIEventsFilters struct {
 	EndTime              strfmt.DateTime
 	ShowNonAPI           bool
 	HasSpecDiffIs        *bool
+	SpecDiffTypeIs       []string
 	MethodIs             []string
 	PathContains         []string
 	PathEnd              *string
@@ -333,6 +335,9 @@ func SetAPIEventsFilters(tx *gorm.DB, filters *APIEventsFilters, shouldSetTimeFi
 
 	// has spec diff filter
 	tx = FilterIsBool(tx, hasSpecDiffColumnName, filters.HasSpecDiffIs)
+
+	// spec diff type filter
+	tx = FilterIs(tx, specDiffTypeColumnName, filters.SpecDiffTypeIs)
 
 	// host spec name filters
 	tx = FilterIs(tx, hostSpecNameColumnName, filters.SpecIs)

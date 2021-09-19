@@ -84,6 +84,7 @@ func getAPIUsageHitCountParamsToFilters(params operations.GetAPIUsageHitCountPar
 		EndTime:              params.EndTime,
 		ShowNonAPI:           params.ShowNonAPI,
 		HasSpecDiffIs:        params.HasSpecDiffIs,
+		SpecDiffTypeIs:       params.SpecDiffTypeIs,
 		MethodIs:             params.MethodIs,
 		PathContains:         params.PathContains,
 		PathEnd:              params.PathEnd,
