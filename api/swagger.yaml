@@ -40,6 +40,7 @@ paths:
         - $ref: '#/parameters/destinationPortIsFilter'
         - $ref: '#/parameters/destinationPortIsNotFilter'
         - $ref: '#/parameters/hasSpecDiffFilter'
+        - $ref: '#/parameters/specDiffTypeIsFilter'
         - $ref: '#/parameters/specIsFilter'
         - $ref: '#/parameters/specIsNotFilter'
         - $ref: '#/parameters/specStartsWithFilter'
@@ -395,7 +396,7 @@ parameters:
       - sourceIP
       - destinationIP
       - destinationPort
-      - hasSpecDiff
+      - specDiffType
       - hostSpecName
     required: true
 
@@ -563,6 +564,19 @@ parameters:
     name: 'hasSpecDiff[is]'
     in: 'query'
     type: 'boolean'
+    required: false
+
+  specDiffTypeIsFilter:
+    name: 'specDiffType[is]'
+    in: 'query'
+    type: 'array'
+    items:
+      type: 'string'
+      enum: # if you edit this you need to edit DiffType in 'definitions' too
+        - ZOMBIE_DIFF
+        - SHADOW_DIFF
+        - SIMPLE_DIFF
+        - NO_DIFF
     required: false
 
   specIsFilter:

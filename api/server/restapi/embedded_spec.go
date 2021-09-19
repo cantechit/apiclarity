@@ -111,6 +111,9 @@ func init() {
             "$ref": "#/parameters/hasSpecDiffFilter"
           },
           {
+            "$ref": "#/parameters/specDiffTypeIsFilter"
+          },
+          {
             "$ref": "#/parameters/specIsFilter"
           },
           {
@@ -991,7 +994,7 @@ func init() {
         "sourceIP",
         "destinationIP",
         "destinationPort",
-        "hasSpecDiff",
+        "specDiffType",
         "hostSpecName"
       ],
       "type": "string",
@@ -1259,6 +1262,20 @@ func init() {
       "name": "spec[contains]",
       "in": "query"
     },
+    "specDiffTypeIsFilter": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "ZOMBIE_DIFF",
+          "SHADOW_DIFF",
+          "SIMPLE_DIFF",
+          "NO_DIFF"
+        ],
+        "type": "string"
+      },
+      "name": "specDiffType[is]",
+      "in": "query"
+    },
     "specEndsWithFilter": {
       "type": "string",
       "name": "spec[end]",
@@ -1399,7 +1416,7 @@ func init() {
               "sourceIP",
               "destinationIP",
               "destinationPort",
-              "hasSpecDiff",
+              "specDiffType",
               "hostSpecName"
             ],
             "type": "string",
@@ -1557,6 +1574,20 @@ func init() {
           {
             "type": "boolean",
             "name": "hasSpecDiff[is]",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "enum": [
+                "ZOMBIE_DIFF",
+                "SHADOW_DIFF",
+                "SIMPLE_DIFF",
+                "NO_DIFF"
+              ],
+              "type": "string"
+            },
+            "name": "specDiffType[is]",
             "in": "query"
           },
           {
@@ -2728,7 +2759,7 @@ func init() {
         "sourceIP",
         "destinationIP",
         "destinationPort",
-        "hasSpecDiff",
+        "specDiffType",
         "hostSpecName"
       ],
       "type": "string",
@@ -2994,6 +3025,20 @@ func init() {
         "type": "string"
       },
       "name": "spec[contains]",
+      "in": "query"
+    },
+    "specDiffTypeIsFilter": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "ZOMBIE_DIFF",
+          "SHADOW_DIFF",
+          "SIMPLE_DIFF",
+          "NO_DIFF"
+        ],
+        "type": "string"
+      },
+      "name": "specDiffType[is]",
       "in": "query"
     },
     "specEndsWithFilter": {
