@@ -285,6 +285,7 @@ paths:
         - $ref: '#/parameters/destinationPortIsFilter'
         - $ref: '#/parameters/destinationPortIsNotFilter'
         - $ref: '#/parameters/hasSpecDiffFilter'
+        - $ref: '#/parameters/specDiffTypeIsFilter'
         - $ref: '#/parameters/specIsFilter'
         - $ref: '#/parameters/specIsNotFilter'
         - $ref: '#/parameters/specStartsWithFilter'

@@ -532,6 +532,9 @@ func init() {
             "$ref": "#/parameters/hasSpecDiffFilter"
           },
           {
+            "$ref": "#/parameters/specDiffTypeIsFilter"
+          },
+          {
             "$ref": "#/parameters/specIsFilter"
           },
           {
@@ -2253,6 +2256,20 @@ func init() {
           {
             "type": "boolean",
             "name": "hasSpecDiff[is]",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "enum": [
+                "ZOMBIE_DIFF",
+                "SHADOW_DIFF",
+                "SIMPLE_DIFF",
+                "NO_DIFF"
+              ],
+              "type": "string"
+            },
+            "name": "specDiffType[is]",
             "in": "query"
           },
           {

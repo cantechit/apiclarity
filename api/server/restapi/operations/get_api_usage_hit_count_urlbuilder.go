@@ -31,6 +31,7 @@ type GetAPIUsageHitCountURL struct {
 	ShowNonAPI           bool
 	SourceIPIsNot        []string
 	SourceIPIs           []string
+	SpecDiffTypeIs       []string
 	SpecContains         []string
 	SpecEnd              *string
 	SpecIsNot            []string
@@ -277,6 +278,23 @@ func (o *GetAPIUsageHitCountURL) Build() (*url.URL, error) {
 		qsv := sourceIPIs[0]
 		if qsv != "" {
 			qs.Set("sourceIP[is]", qsv)
+		}
+	}
+
+	var specDiffTypeIsIR []string
+	for _, specDiffTypeIsI := range o.SpecDiffTypeIs {
+		specDiffTypeIsIS := specDiffTypeIsI
+		if specDiffTypeIsIS != "" {
+			specDiffTypeIsIR = append(specDiffTypeIsIR, specDiffTypeIsIS)
+		}
+	}
+
+	specDiffTypeIs := swag.JoinByFormat(specDiffTypeIsIR, "")
+
+	if len(specDiffTypeIs) > 0 {
+		qsv := specDiffTypeIs[0]
+		if qsv != "" {
+			qs.Set("specDiffType[is]", qsv)
 		}
 	}
 
