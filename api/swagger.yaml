@@ -576,7 +576,7 @@ parameters:
       enum: # if you edit this you need to edit DiffType in 'definitions' too
         - ZOMBIE_DIFF
         - SHADOW_DIFF
-        - SIMPLE_DIFF
+        - GENERAL_DIFF
         - NO_DIFF
     required: false
 
@@ -847,7 +847,7 @@ definitions:
     enum:
       - ZOMBIE_DIFF
       - SHADOW_DIFF
-      - SIMPLE_DIFF
+      - GENERAL_DIFF
       - NO_DIFF
 
   ApiResponse:

@@ -32,8 +32,8 @@ const (
 	// DiffTypeSHADOWDIFF captures enum value "SHADOW_DIFF"
 	DiffTypeSHADOWDIFF DiffType = "SHADOW_DIFF"
 
-	// DiffTypeSIMPLEDIFF captures enum value "SIMPLE_DIFF"
-	DiffTypeSIMPLEDIFF DiffType = "SIMPLE_DIFF"
+	// DiffTypeGENERALDIFF captures enum value "GENERAL_DIFF"
+	DiffTypeGENERALDIFF DiffType = "GENERAL_DIFF"
 
 	// DiffTypeNODIFF captures enum value "NO_DIFF"
 	DiffTypeNODIFF DiffType = "NO_DIFF"
@@ -44,7 +44,7 @@ var diffTypeEnum []interface{}
 
 func init() {
 	var res []DiffType
-	if err := json.Unmarshal([]byte(`["ZOMBIE_DIFF","SHADOW_DIFF","SIMPLE_DIFF","NO_DIFF"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["ZOMBIE_DIFF","SHADOW_DIFF","GENERAL_DIFF","NO_DIFF"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

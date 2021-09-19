@@ -835,7 +835,7 @@ func init() {
       "enum": [
         "ZOMBIE_DIFF",
         "SHADOW_DIFF",
-        "SIMPLE_DIFF",
+        "GENERAL_DIFF",
         "NO_DIFF"
       ]
     },
@@ -1271,7 +1271,7 @@ func init() {
         "enum": [
           "ZOMBIE_DIFF",
           "SHADOW_DIFF",
-          "SIMPLE_DIFF",
+          "GENERAL_DIFF",
           "NO_DIFF"
         ],
         "type": "string"
@@ -1585,7 +1585,7 @@ func init() {
               "enum": [
                 "ZOMBIE_DIFF",
                 "SHADOW_DIFF",
-                "SIMPLE_DIFF",
+                "GENERAL_DIFF",
                 "NO_DIFF"
               ],
               "type": "string"
@@ -2264,7 +2264,7 @@ func init() {
               "enum": [
                 "ZOMBIE_DIFF",
                 "SHADOW_DIFF",
-                "SIMPLE_DIFF",
+                "GENERAL_DIFF",
                 "NO_DIFF"
               ],
               "type": "string"
@@ -2614,7 +2614,7 @@ func init() {
       "enum": [
         "ZOMBIE_DIFF",
         "SHADOW_DIFF",
-        "SIMPLE_DIFF",
+        "GENERAL_DIFF",
         "NO_DIFF"
       ]
     },
@@ -3050,7 +3050,7 @@ func init() {
         "enum": [
           "ZOMBIE_DIFF",
           "SHADOW_DIFF",
-          "SIMPLE_DIFF",
+          "GENERAL_DIFF",
           "NO_DIFF"
         ],
         "type": "string"

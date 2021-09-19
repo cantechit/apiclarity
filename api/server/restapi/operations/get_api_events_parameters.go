@@ -894,7 +894,7 @@ func (o *GetAPIEventsParams) bindSpecDiffTypeIs(rawData []string, hasKey bool, f
 	for i, specDiffTypeIsIV := range specDiffTypeIsIC {
 		specDiffTypeIsI := specDiffTypeIsIV
 
-		if err := validate.EnumCase(fmt.Sprintf("%s.%v", "specDiffType[is]", i), "query", specDiffTypeIsI, []interface{}{"ZOMBIE_DIFF", "SHADOW_DIFF", "SIMPLE_DIFF", "NO_DIFF"}, true); err != nil {
+		if err := validate.EnumCase(fmt.Sprintf("%s.%v", "specDiffType[is]", i), "query", specDiffTypeIsI, []interface{}{"ZOMBIE_DIFF", "SHADOW_DIFF", "GENERAL_DIFF", "NO_DIFF"}, true); err != nil {
 			return err
 		}
 
