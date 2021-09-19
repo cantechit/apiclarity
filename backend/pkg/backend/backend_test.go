@@ -191,11 +191,11 @@ func Test_getAPIDiffType(t *testing.T) {
 			want: models.DiffTypeSHADOWDIFF,
 		},
 		{
-			name: "DiffTypeSimpleDiff",
+			name: "DiffTypeGeneralDiff",
 			args: args{
-				diffType: _spec.DiffTypeSimpleDiff,
+				diffType: _spec.DiffTypeGeneralDiff,
 			},
-			want: models.DiffTypeSIMPLEDIFF,
+			want: models.DiffTypeGENERALDIFF,
 		},
 	}
 	for _, tt := range tests {
@@ -228,10 +228,10 @@ func Test_getSpecDiffType(t *testing.T) {
 		{
 			name: "Same type",
 			args: args{
-				providedDiff:      models.DiffTypeSIMPLEDIFF,
-				reconstructedDiff: models.DiffTypeSIMPLEDIFF,
+				providedDiff:      models.DiffTypeGENERALDIFF,
+				reconstructedDiff: models.DiffTypeGENERALDIFF,
 			},
-			want: models.DiffTypeSIMPLEDIFF,
+			want: models.DiffTypeGENERALDIFF,
 		},
 		{
 			name: "reconstructed unknown type",

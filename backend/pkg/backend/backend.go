@@ -328,8 +328,8 @@ func getAPIDiffType(diffType _spec.DiffType) models.DiffType {
 		return models.DiffTypeSHADOWDIFF
 	case _spec.DiffTypeZombieDiff:
 		return models.DiffTypeZOMBIEDIFF
-	case _spec.DiffTypeSimpleDiff:
-		return models.DiffTypeSIMPLEDIFF
+	case _spec.DiffTypeGeneralDiff:
+		return models.DiffTypeGENERALDIFF
 	default:
 		log.Warnf("Unknown diff type: %v", diffType)
 	}
@@ -339,10 +339,10 @@ func getAPIDiffType(diffType _spec.DiffType) models.DiffType {
 
 var diffTypePriority = map[models.DiffType]int{
 	// starting from 1 since unknown type will return 0
-	models.DiffTypeNODIFF:     1,
-	models.DiffTypeSIMPLEDIFF: 2,
-	models.DiffTypeSHADOWDIFF: 3,
-	models.DiffTypeZOMBIEDIFF: 4,
+	models.DiffTypeNODIFF:      1,
+	models.DiffTypeGENERALDIFF: 2,
+	models.DiffTypeSHADOWDIFF:  3,
+	models.DiffTypeZOMBIEDIFF:  4,
 }
 
 // getSpecDiffType will return the type with the highest priority

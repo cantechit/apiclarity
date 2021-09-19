@@ -72,7 +72,7 @@ type APIEvent struct {
 	HasReconstructedSpecDiff bool              `json:"hasReconstructedSpecDiff,omitempty" gorm:"column:hasReconstructedSpecDiff"`
 	HasProvidedSpecDiff      bool              `json:"hasProvidedSpecDiff,omitempty" gorm:"column:hasProvidedSpecDiff"`
 	HasSpecDiff              bool              `json:"hasSpecDiff,omitempty" gorm:"column:hasSpecDiff"`
-	SpecDiffType             models.DiffType   `json:"specDiffType,omitempty" gorm:"column:specDiffType" faker:"oneof: ZOMBIE_DIFF, SHADOW_DIFF, SIMPLE_DIFF, NO_DIFF"`
+	SpecDiffType             models.DiffType   `json:"specDiffType,omitempty" gorm:"column:specDiffType" faker:"oneof: ZOMBIE_DIFF, SHADOW_DIFF, GENERAL_DIFF, NO_DIFF"`
 	HostSpecName             string            `json:"hostSpecName,omitempty" gorm:"column:hostSpecName" faker:"oneof: test.com, example.com, kaki.org"`
 	IsNonAPI                 bool              `json:"isNonApi,omitempty" gorm:"column:isNonApi" faker:"-"`
 
